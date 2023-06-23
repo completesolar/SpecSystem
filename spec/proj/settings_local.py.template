@@ -1,0 +1,80 @@
+import ldap
+import os
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, GroupOfNamesType, LDAPGroupQuery
+from pathlib import Path
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-*_GenerateAcustomKey'
+
+DATABASES = {
+    "default": {
+        "ENGINE": "mssql",
+        "NAME": 'spec_qa',
+        "HOST": 'sqlexpress',
+        "USER": "sa",
+        "PASSWORD": "Passw@rd",
+        "OPTIONS": {
+            "driver": "ODBC Driver 18 for SQL Server",
+            "TRUST_SERVER_CERTIFICATE": True,
+            'extra_params': "Encrypt=no"  # TrustServerCertificate=no
+        },
+    },
+}
+
+
+os.environ['ADMIN_USER'] = 'spec-sup-test01'
+os.environ['ADMIN_PASSWD'] = 'SupPasswd'
+
+os.environ['USER_USER'] = 'spec-user-test01'
+os.environ['USER_PASSWD'] = 'UserPasswd'
+
+os.environ['AD_SUFFIX'] = 'Test'
+
+
+LOG_DIR = '/var/log'
+LOGGING_OVERRIDES = {
+                "handlers": {
+                    'djangoInfo': {
+                        'filename': os.path.join(LOG_DIR, "django.log"),
+                    },
+                    'appInfo': {
+                        'filename': os.path.join(LOG_DIR, "spec.log"),
+                    },
+                    'authInfo': {
+                        'filename': os.path.join(LOG_DIR, "auth.log"),
+                    },
+                },
+                "loggers": {
+                    'django': {
+                        'handlers': ['console', ],
+                        'level': 'INFO',
+                    },
+                    'requests': {
+                        'handlers': ['console', ],
+                        'level': 'INFO',
+                    },
+                    'data': {
+                        'handlers': ['console', ],
+                        'level': 'INFO',
+                    },
+                    "django_auth_ldap": {
+                        "handlers": ['console', ],
+                        "level": "DEBUG",
+                    },
+                },
+            }
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# PDF Conversion tools
+# Install LibreOffice from https://www.libreoffice.org/download/download-libreoffice/
+SOFFICE = 'libreoffice'
+TEMP_PDF = os.path.join(MEDIA_ROOT, 'temp')
+
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'spec_system@company.com'
+EMAIL_HOST_PASSWORD = 'SuperSecret'
+EMAIL_USE_TLS    = True

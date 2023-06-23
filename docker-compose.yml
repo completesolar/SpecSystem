@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  memosystem:
+    build: ./spec
+    container_name: specsystem
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ~/Solar/specsystem/memo_files/static:/app/memos/static
+    depends_on:
+      - sqlexpress
+
+  sqlexpress:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    volumes:
+      - events_mssql:/var/opt/mssql
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=1
+      - MSSQL_SA_PASSWORD=Passw@rd
+    tmpfs:
+      - /run
+
+  phpserver:
+    image: php:7.4-apache
+    container_name: phpserver
+    ports:
+      - 8888:80
+    volumes:
+      - ./auth:/var/www/html
+    environment:
+      - APP_ID=xxx
+      - SECRET=xxx
+      - LOGIN_URL=https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+      - REDIRECT_URL=http://localhost:8888/
+      - SPEC_LOGIN_URL=http://localhost/accounts/login/
+
+volumes:
+  events_mssql:

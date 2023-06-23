@@ -1,0 +1,13 @@
+*~
+#*#
+__pycache__
+env
+site.db
+test.db
+env.sh
+.coverage
+.vscode
+settings_local.py
+*.pyc
+.DS_Store
+.idea/
