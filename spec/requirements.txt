@@ -2,7 +2,7 @@ asgiref==3.5.2
 concurrent-log-handler==0.9.20
 coverage==6.4.4
 deepmerge==1.0.1
-Django==4.0.7
+Django==4.1.9
 django-auth-ldap==4.1.0
 django-cleanup==6.0.0
 django-cors-headers==3.13.0
