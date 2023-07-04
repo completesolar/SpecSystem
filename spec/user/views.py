@@ -26,7 +26,7 @@ class CustomLoginView(LoginView):
         print("In CustomLoginView get method")
 
         # As there's no signature validation, it's okay to not provide a key.
-        decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
+        decoded_token = jwt.decode(jwt_token, key="your_secret_key", algorithms=["HS256"], audience="https://graph.microsoft.com", options={"verify_signature": True})
 
         first_name = decoded_token.get('name', '')
         last_name = ''
