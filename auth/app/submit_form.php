@@ -1,7 +1,7 @@
 <?php 
     require 'vendor/autoload.php';
     use \Firebase\JWT\JWT;
-    $secretKey = 'your_secret_key';
+    $secretKey = getenv('SECRET_JWT');
 ?>
 <form id="login" action="<?php echo getenv('SPEC_LOGIN_URL');?>" method="get">
     <?php
