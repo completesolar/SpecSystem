@@ -26,8 +26,10 @@ class CustomLoginView(LoginView):
         print("In CustomLoginView get method")
 
         # As there's no signature validation, it's okay to not provide a key.
-        decoded_token = jwt.decode(jwt_token, key=settings.SECRET_JWT, algorithms=["HS256"], audience="https://graph.microsoft.com", options={"verify_signature": True})
-
+        try:
+            decoded_token = jwt.decode(jwt_token, key=settings.SECRET_JWT, algorithms=["HS256"], audience="https://graph.microsoft.com", options={"verify_signature": True})
+        except BaseException as be:  # pragma: no cover
+            return HttpResponseRedirect(settings.AUTH_URL_LOGIN)
         first_name = decoded_token.get('name', '')
         last_name = ''
         upn = decoded_token.get('upn', '')
