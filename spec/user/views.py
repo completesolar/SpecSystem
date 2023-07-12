@@ -29,7 +29,7 @@ class CustomLoginView(LoginView):
         try:
             decoded_token = jwt.decode(jwt_token, key=settings.SECRET_JWT, algorithms=["HS256"], audience="https://graph.microsoft.com", options={"verify_signature": True})
         except BaseException as be:  # pragma: no cover
-            return HttpResponseRedirect(settings.AUTH_URL_LOGIN)
+            return HttpResponseRedirect(settings.AUTH_URL_LOGOUT)
         first_name = decoded_token.get('name', '')
         last_name = ''
         upn = decoded_token.get('upn', '')
