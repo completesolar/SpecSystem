@@ -25,6 +25,20 @@ from utils.dev_utils import formatError
 from ..models import Spec, SpecFile, SpecHist
 from ..serializers.specSerializers import FilePostSerializer, ImportSpecSerializer, SpecCreateSerializer, SpecExtendSerializer, SpecListSerializer, SpecPutSerializer, SpecRejectSerializer, SpecReviseSerializer, SpecDetailSerializer, SpecSignSerializer
 
+from datetime import datetime
+from dateutil import parser as date_parser
+from django.db import connection
+
+def format_datetime(dt_str):
+    # Check if the datetime value is not empty
+    if dt_str:
+        # Parse the input datetime string using dateutil.parser
+        dt_object = date_parser.parse(dt_str)
+        # Format the datetime object as "YYYY-MM-DD hh:mm:ss"
+        formatted_dt = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+        return formatted_dt
+    return ''
+
 
 def genCsv(request, outFileName, serializer, queryset):
     """
@@ -40,6 +54,41 @@ def genCsv(request, outFileName, serializer, queryset):
             w = None
             for r in queryset:
                 d = serializer.to_representation(r)
+                d['create_dt'] = format_datetime(d['create_dt'])
+                d['mod_ts'] = format_datetime(d['mod_ts'])
+                d['approved_dt'] = format_datetime(d['approved_dt'])
+                d['sunset_extended_dt'] = format_datetime(d['sunset_extended_dt'])
+                d['sunset_dt'] = format_datetime(d['sunset_dt'])
+                d['sunset_warn_dt'] = format_datetime(d['sunset_warn_dt'])
+
+                raw_query = """
+                    SELECT 
+                        STRING_AGG(CASE WHEN spec_sig.signed_dt IS NULL THEN CONCAT('(', spec_sig.role_id, ') ', auth_user.username) END, ', ') AS unsigned_signers,
+                        STRING_AGG(CASE WHEN spec_sig.signed_dt IS NOT NULL THEN CONCAT('(', spec_sig.role_id, ') ', auth_user.username) END, ', ') AS signed_signers
+                    FROM 
+                        spec 
+                    JOIN 
+                        spec_sig 
+                    ON
+                        spec.id = spec_sig.spec_id
+                    JOIN 
+                        auth_user 
+                    ON
+                        spec_sig.signer_id = auth_user.id
+                    WHERE 
+                        spec.num = %s
+                    GROUP BY 
+                        spec.id, spec.num;
+                """
+                with connection.cursor() as cursor:
+                    cursor.execute(raw_query, [d['num']])
+                    results = cursor.fetchall()
+                    for row in results:
+                        unsigned_signers = row[0]
+                        signed_signers = row[1]
+                        d['unsigned_signers'] = unsigned_signers
+                        d['signed_signers'] = signed_signers
+
                 if not w:
                     w = csv.DictWriter(f, d.keys())
                     w.writeheader()
