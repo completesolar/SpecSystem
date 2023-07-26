@@ -104,16 +104,18 @@ def specSubmit(request, spec):
 
         to = spec.sigs.filter(signer__isnull=False,signer__email__isnull=False).values_list('signer__email', flat=True)
         if len(to) > 0 and settings.EMAIL_HOST is not None and len(settings.EMAIL_HOST) > 0:
+            url_path = f'ui-spec/{spec.num}/{spec.ver}'
+            url = f'{settings.BASE_URL}{url_path}'
             email = EmailMessage(
                 subject=f'{"[From Test]" if os.environ["AD_SUFFIX"] == "Test" else ""} Spec {spec.num} "{spec.title}" needs your review',
                 body=f'''{"[From Test]" if os.environ["AD_SUFFIX"] == "Test" else ""} Spec {spec.num}/{spec.ver} "{spec.title}" needs your review
-                {request.build_absolute_uri('/ui-spec/'+str(spec.num)+'/'+spec.ver)}
+                {url}
                 ''',
                 from_email=settings.EMAIL_HOST_USER,
                 to=to,
                 reply_to=[spec.created_by.email],
             )
-            email.send(fail_silently=True)
+            email.send(fail_silently=False)
 
         return spec
     except BaseException as be: # pragma nocover
@@ -196,7 +198,7 @@ def specSign(request, spec, validated_data):
                 to=to,
                 reply_to=[spec.created_by.email],
             )
-            email.send(fail_silently=True)
+            email.send(fail_silently=False)
 
         return spec
     except BaseException as be: # pragma nocover
@@ -240,7 +242,7 @@ def specReject(request, spec, validated_data):
             to=[spec.created_by.email, ],
             reply_to=[request.user.email],
         )
-        email.send(fail_silently=True)
+        email.send(fail_silently=False)
 
     return spec
 
