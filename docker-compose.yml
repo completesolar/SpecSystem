@@ -26,7 +26,7 @@ services:
       - /run
 
   phpserver:
-    image: php:7.4-apache
+    image: php:8-apache
     container_name: phpserver
     ports:
       - 8888:80
@@ -38,6 +38,9 @@ services:
       - LOGIN_URL=https://login.microsoftonline.com/common/oauth2/v2.0/authorize
       - REDIRECT_URL=http://localhost:8888/
       - SPEC_LOGIN_URL=http://localhost/accounts/login/
+      - GOOGLE_CLIENT_ID=xxx
+      - GOOGLE_SECRET_ID=xxx
+      - LOGIN_TYPE=all
 
 volumes:
   events_mssql:
