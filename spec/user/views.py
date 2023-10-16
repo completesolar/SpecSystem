@@ -23,6 +23,7 @@ from django.conf import settings
 class CustomLoginView(LoginView):
     def get(self, request, *args, **kwargs):
         jwt_token = request.GET.get('jwt_token')
+        login_type = request.GET.get('login_type')
         print("In CustomLoginView get method")
 
         # As there's no signature validation, it's okay to not provide a key.
@@ -30,9 +31,15 @@ class CustomLoginView(LoginView):
             decoded_token = jwt.decode(jwt_token, key=settings.SECRET_JWT, algorithms=["HS256"], audience="https://graph.microsoft.com", options={"verify_signature": True})
         except BaseException as be:  # pragma: no cover
             return HttpResponseRedirect(settings.AUTH_URL_LOGOUT)
-        first_name = decoded_token.get('name', '')
-        last_name = ''
-        upn = decoded_token.get('upn', '')
+
+        if (login_type == 'google'):
+            first_name = decoded_token.get('email', '')
+            last_name = ''
+            upn = decoded_token.get('email', '')
+        else:
+            first_name = decoded_token.get('name', '')
+            last_name = ''
+            upn = decoded_token.get('upn', '')
 
         print(f"TOKEN Value in Login View: {jwt_token}")
         print(f"Decoded TOKEN Value: {decoded_token}")
