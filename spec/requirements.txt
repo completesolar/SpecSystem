@@ -21,6 +21,6 @@ pyodbc==4.0.34
 PyPDF2==2.10.5
 python-ldap
 pytz==2022.2.1
-sqlparse==0.4.2
+sqlparse==0.4.4
 tzdata==2022.2
 PyJWT==2.3.0
