@@ -1,7 +1,7 @@
 
 # Installation Readme Document
 
-This document provides instructions on how to install and set up the memosystem application, which includes four services: memosystem, sqlexpress, ldap, and phpldapadmin.
+This document provides instructions on how to install and set up the specsystem application.
 
 ## Prerequisites
 
@@ -11,25 +11,17 @@ This document provides instructions on how to install and set up the memosystem 
 
 ## Installation Steps
 
-1. Open a terminal window and navigate to the directory where the installation files are located.
+1. Copy file `spec/proj/settings_local.py.template` as `spec/proj/settings_local.py`. Modify values if necessary.
+    
+2. Run the following command to start the installation process:
 
-2. Create a new file in the `proj` directory named `settings_local.py`.
-
-3. Copy the contents of `settings_local.py.template` into the new file.
-
-4. Modify the contents of the new file as needed for your local environment.
+    `docker-compose up --build`
     
-5. Run the following command to start the installation process:
+3. Open [http://localhost:80](http://localhost:80) or [https://localhost:443](https://localhost:443). You should see the specsystem login page.
     
-    `docker-compose up --build` 
+4. To log in to the application, you need to create a user account. To do this, first, access the phpldapadmin interface by navigating to [http://localhost:8080](http://localhost:8080/).
     
-6. The installation process will begin, and you will see logs from each service as it starts up. Wait until you see a message that says "Listening on port 80" and "Listening on port 443" for the memosystem service. This means the installation is complete, and the application is running.
-    
-7. Access the application by opening a web browser and navigating to [http://localhost:80](http://localhost/) or [https://localhost:443](https://localhost/). You should see the memosystem login page.
-    
-8. To log in to the application, you need to create a user account. To do this, first, access the phpldapadmin interface by navigating to [http://localhost:8080](http://localhost:8080/).
-    
-9. Log in using the following credentials:
+5. Log in using the following credentials:
     
     `Login DN: cn=admin,dc=company,dc=local
     Password: adminpassword` 
@@ -40,7 +32,7 @@ This document provides instructions on how to install and set up the memosystem 
     
 12. Fill out the user details on the next page, including a username, first name, last name, and password. Click "Create Object" to save the user.
     
-13. Now you can log in to the memosystem application using the username and password you just created.
+13. Now you can log in to the specsystem application using the username and password you just created.
     
 
 **Note:** If you need to stop the application, press CTRL+C in the terminal window where the application is running. To start the application again, navigate to the directory where the installation files are located and run the "docker-compose up" command again.
@@ -48,7 +40,7 @@ This document provides instructions on how to install and set up the memosystem 
 ## Troubleshooting
 
 -   If you have trouble accessing the application, make sure that no other services are using ports 80, 443, 8080, or 389.
--   If the memosystem service does not start, make sure that the "spec" directory containing the memosystem code is in the same directory as the docker-compose.yml file.
+-   If the specsystem service does not start, make sure that the "spec" directory containing the specsystem code is in the same directory as the docker-compose.yml file.
 
 
 ## Loading the ldap.ldif File into phpldapadmin
@@ -71,17 +63,17 @@ To load the ldap.ldif file into the phpldapadmin interface, follow these steps:
 
 ## Running Django Migrations
 
-After the installation and setup of the memosystem application, you need to run the Django migrations to set up the database schema. Follow these steps:
+After the installation and setup of the specsystem application, you need to run the Django migrations to set up the database schema. Follow these steps:
 
 1.  Open a new terminal window and navigate to the directory where the installation files are located.
     
-2.  Run the following command to access the memosystem container:
+2.  Run the following command to access the specsystem container:
     
     `docker exec -it specsystem bash` 
     
 3.  Once you are in the container's shell, navigate to the directory where the Django project is located:
     
-    `cd memos` 
+    `cd spec` 
     
 4.  Run the following command to run the Django migrations:
 
@@ -90,6 +82,6 @@ After the installation and setup of the memosystem application, you need to run 
 5.  Wait until the migrations complete, and you see a message indicating that the migrations were applied successfully.
     
 
-Now you can use the memosystem application with the database schema set up correctly.
+Now you can use the specsystem application with the database schema set up correctly.
 
 -   Find the original documentation here [IoT Expert](https://github.com/iotexpert/specsystem).

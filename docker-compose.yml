@@ -1,15 +1,14 @@
 version: '3.8'
 
 services:
-  memosystem:
+  specsystem:
     build: ./spec
-    container_name: specsystem
     restart: always
     ports:
-      - 80:80
+      - 8087:80
       - 443:443
     volumes:
-      - ~/Solar/specsystem/memo_files/static:/app/memos/static
+      - ./spec_files:/app/spec/static
     depends_on:
       - sqlexpress
 
@@ -27,17 +26,17 @@ services:
 
   phpserver:
     image: php:7.4-apache
-    container_name: phpserver
     ports:
       - 8888:80
     volumes:
       - ./auth:/var/www/html
     environment:
-      - APP_ID=xxx
-      - SECRET=xxx
-      - LOGIN_URL=https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+      - APP_ID=94c7b180-d769-4a18-ac7a-dbc496bf5e4e
+      - SECRET={replace_with_real_secret}
+      - LOGIN_URL=https://login.microsoftonline.com/43754c3b-6e44-4fc9-8b0a-304ac51f69a1/oauth2/v2.0/authorize
       - REDIRECT_URL=http://localhost:8888/
-      - SPEC_LOGIN_URL=http://localhost/accounts/login/
+      - SPEC_LOGIN_URL=http://localhost:8888/accounts/login/
+      - SECRET_JWT=fN5.Oo52zFZ4Kn9k
 
 volumes:
   events_mssql:
