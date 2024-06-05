@@ -29,12 +29,14 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update && apt-get install -y curl apt-transport-https gnupg2
 RUN TEMP_DEB="$(mktemp)" \
- && wget -O "$TEMP_DEB" 'https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.2.1.1-1_arm64.deb' \
+ && ARCH=$(dpkg --print-architecture) \
+ && wget -O "$TEMP_DEB" "https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.2.1.1-1_$ARCH.deb" \
  && yes | dpkg --skip-same-version -i "$TEMP_DEB" \
  && rm -f "$TEMP_DEB"
 
 RUN TEMP_DEB="$(mktemp)" \
- && wget -O "$TEMP_DEB" 'https://packages.microsoft.com/debian/11/prod/pool/main/m/mssql-tools18/mssql-tools18_18.2.1.1-1_arm64.deb' \
+ && ARCH=$(dpkg --print-architecture) \
+ && wget -O "$TEMP_DEB" "https://packages.microsoft.com/debian/11/prod/pool/main/m/mssql-tools18/mssql-tools18_18.2.1.1-1_${ARCH}.deb" \
  && yes | dpkg --skip-same-version -i "$TEMP_DEB" \
  && rm -f "$TEMP_DEB"
 
