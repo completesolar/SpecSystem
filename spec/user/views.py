@@ -32,7 +32,9 @@ class CustomLoginView(LoginView):
             return HttpResponseRedirect(settings.AUTH_URL_LOGOUT)
         first_name = decoded_token.get('name', '')
         last_name = ''
-        upn = decoded_token.get('upn', '')
+
+        # Guest users do not have a upn key, and ordinary users do not have an email key.
+        upn = decoded_token.get('upn', decoded_token.get('email', ''))
 
         print(f"TOKEN Value in Login View: {jwt_token}")
         print(f"Decoded TOKEN Value: {decoded_token}")
