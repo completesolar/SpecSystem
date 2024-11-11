@@ -23,7 +23,7 @@ if (array_key_exists('access_token', $_POST)) {
 
     $specUrl = getenv('SPEC_LOGIN_URL');    
     $jwtParts = explode(".", $_POST['access_token']);   
-    $payload = json_decode(base64_decode($jwtParts[1]),true);   
+    $payload = json_decode(JWT::urlsafeB64Decode($jwtParts[1]), true);   
     $jwtToken = JWT::encode($payload, getenv('SECRET_JWT'), 'HS256');   
 
     header('Location: ' . $specUrl . '?' . http_build_query([   
