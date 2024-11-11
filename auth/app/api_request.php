@@ -1,5 +1,10 @@
 <?php
-if (array_key_exists ('access_token', $_POST)){
+
+require 'vendor/autoload.php';
+
+use \Firebase\JWT\JWT;
+
+if (array_key_exists('access_token', $_POST)) {
     $_SESSION['jwt_token'] = $_POST['access_token'];
     $t = $_SESSION['jwt_token'];
 
@@ -15,4 +20,16 @@ if (array_key_exists ('access_token', $_POST)){
         var_dump ($rez['error']);
         die();
     }
+
+    $specUrl = getenv('SPEC_LOGIN_URL');    
+    $jwtParts = explode(".", $_POST['access_token']);   
+    $payload = json_decode(base64_decode($jwtParts[1]),true);   
+    $jwtToken = JWT::encode($payload, getenv('SECRET_JWT'), 'HS256');   
+
+    header('Location: ' . $specUrl . '?' . http_build_query([   
+        'jwt_token' => $jwtToken,   
+        'state' => $_SESSION['state'],  
+    ]));
+    
+    exit;
 }
