@@ -1,23 +1,15 @@
-<?php 
-    require 'vendor/autoload.php';
-    use \Firebase\JWT\JWT;
-    $secretKey = getenv('SECRET_JWT');
-?>
-<form id="login" action="<?php echo getenv('SPEC_LOGIN_URL');?>" method="get">
-    <?php
-    foreach ($_SESSION as $a => $b) {
-        if($a=="jwt_token"){
-            $token = $b;
-            $payload = explode(".",$b);
-            $payload = json_decode(base64_decode($payload[1]),true);
-            $jwtToken = JWT::encode($payload, $secretKey, 'HS256');
-            echo '<input type="hidden" name="'.htmlentities($a).'" value="'.htmlentities($jwtToken).'">';
-        }else{
-            echo '<input type="hidden" name="'.htmlentities($a).'" value="'.htmlentities($b).'">';
-        }
-    }
-    ?>
-</form>
-<script type="text/javascript">
-    document.getElementById('login').submit();
-</script>
+<?php
+
+require 'vendor/autoload.php';
+
+use \Firebase\JWT\JWT;
+
+$specUrl = getenv('SPEC_LOGIN_URL');
+$jwtParts = explode(".", $_SESSION['jwt_token']);
+$payload = json_decode(base64_decode($jwtParts[1]),true);
+$jwtToken = JWT::encode($payload, getenv('SECRET_JWT'), 'HS256');
+
+header('Location: ' . $specUrl . '?' . http_build_query([
+    'jwt_token' => $jwtToken,
+    'state' => $_SESSION['state'],
+]));
