@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 # start-server.sh
+
+echo pwd && ls -la
+
+python manage.py collectstatic --noinput
+
+cd ./ui/ && npm install && npm run build && cd ..
+cp -r ./frontend/static/* ./static
+
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ] ; then
     python manage.py createsuperuser --no-input
 fi

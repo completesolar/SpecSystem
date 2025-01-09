@@ -59,7 +59,7 @@ TrustServerCertificate = Yes\n\
 WORKDIR $APP
 
 # Copy the current directory contents into the container at /app
-COPY . $APP
+COPY ./requirements.txt $APP/requirements.txt
 
 # Setup nginx
 COPY nginx.default /etc/nginx/sites-available/default
@@ -75,15 +75,7 @@ RUN libreoffice --norestore --safe-mode --view --convert-to pdf --outdir $APP/he
 # Install the dependencies; build the ui folder; publish frontend
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN cd $APP && python manage.py collectstatic --noinput 
+RUN pip install -r $APP/requirements.txt
 
-RUN chmod a+x /app/start-server.sh
-
-RUN cd $APP/ui/ && npm install
-RUN cd $APP/ui/ && npm run build 
-RUN cp -r /app/frontend/static/* /app/static
-
-EXPOSE 8020
 STOPSIGNAL SIGTERM
 CMD ["/app/start-server.sh"]

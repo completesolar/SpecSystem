@@ -8,6 +8,7 @@ services:
       - 8087:80
       - 443:443
     volumes:
+      - ./spec:/app
       - ./spec_files:/app/spec/static
     depends_on:
       - sqlexpress
@@ -35,7 +36,7 @@ services:
       - SECRET={replace_with_real_secret}
       - LOGIN_URL=https://login.microsoftonline.com/43754c3b-6e44-4fc9-8b0a-304ac51f69a1/oauth2/v2.0/authorize
       - REDIRECT_URL=http://localhost:8888/
-      - SPEC_LOGIN_URL=http://localhost:8888/accounts/login/
+      - SPEC_LOGIN_URL=http://localhost:8087/accounts/login/
       - SECRET_JWT=fN5.Oo52zFZ4Kn9k
 
 volumes:
