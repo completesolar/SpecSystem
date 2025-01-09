@@ -17,6 +17,7 @@ def formatError(exc, defaultCode):
     """
     if isinstance(exc, ValidationError):
         exc.detail['traceBack'] = f"File: {sys.exc_info()[2].tb_frame.f_code.co_filename} Line: {sys.exc_info()[2].tb_lineno} Function: {sys.exc_info()[2].tb_frame.f_code.co_name}"
+        exc.detail['fullTrace'] = f"\n{traceback.format_exc()}"
         raise
     else: # pragma no cover
         raise ValidationError({"errorCode":defaultCode, "error":sys.exc_info()[1], "traceBack":traceback.format_exc()})
