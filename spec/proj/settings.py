@@ -236,7 +236,7 @@ LOGGING = {
                 },
             }
             
-SOFFICE = None
+SOFFICE = 'libreoffice24.8'
 TEMP_PDF = os.path.join(MEDIA_ROOT, 'temp')
 
 # Override default settings

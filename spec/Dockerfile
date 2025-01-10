@@ -40,6 +40,11 @@ RUN TEMP_DEB="$(mktemp)" \
  && yes | dpkg --skip-same-version -i "$TEMP_DEB" \
  && rm -f "$TEMP_DEB"
 
+RUN wget -O "/tmp/libreoffice.tar.gz" "https://download.documentfoundation.org/libreoffice/stable/24.8.4/deb/x86_64/LibreOffice_24.8.4_Linux_x86-64_deb.tar.gz" \
+ && tar -xvf /tmp/libreoffice.tar.gz -C /tmp \
+ && dpkg -i /tmp/LibreOffice_24.8.4.*_Linux_x86-64_deb/DEBS/*.deb \
+ && rm -rf /tmp/LibreOffice_24.8.4.*_Linux_x86-64_deb /tmp/libreoffice.tar.gz
+
 RUN echo "[ODBC]\n\
 Trace = No\n\
 TraceFile = /dev/null\n\
@@ -67,15 +72,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
   && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Build help files
-RUN libreoffice --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/user_guide.docx \
-  && libreoffice --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/admin_guide.docx \
-  && libreoffice --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/high_level_design.docx
-
 # Install the dependencies; build the ui folder; publish frontend
-
 RUN pip install --upgrade pip
 RUN pip install -r $APP/requirements.txt
 
 STOPSIGNAL SIGTERM
-CMD ["/app/start-server.sh"]
+ENTRYPOINT ["/app/start-server.sh"]
