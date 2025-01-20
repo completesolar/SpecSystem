@@ -25,6 +25,17 @@ This document provides instructions on how to install and set up the specsystem 
 
 -   If you have trouble accessing the application, make sure that no other services are using ports 8888, 443, or 8087.
 
+## Building frontend assets
+
+To build the frontend assets, run the following command:
+
+`docker-compose exec specsystem bash`
+
+```
+cd ui/ && npm install && npm run build:dev && cd ..
+cp -r ./frontend/static/* ./static
+```
+
 ## Running Django Migrations
 
 After the installation and setup of the specsystem application, you need to run the Django migrations to set up the database schema. Follow these steps:

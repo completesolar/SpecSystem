@@ -3,15 +3,6 @@
 
 python manage.py collectstatic --noinput
 
-# Build the frontend
-cd ./ui/ && npm install && npm run build && cd ..
-cp -r ./frontend/static/* ./static
-
-# Build the help files
-libreoffice24.8 --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/user_guide.docx \
-  && libreoffice24.8 --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/admin_guide.docx \
-  && libreoffice24.8 --norestore --safe-mode --view --convert-to pdf --outdir $APP/help $APP/help/high_level_design.docx
-
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ] ; then
     python manage.py createsuperuser --no-input
 fi
