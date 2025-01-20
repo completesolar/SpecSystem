@@ -8,6 +8,7 @@ const initialState = {
   username: localStorage.getItem('username') || '',
   failedLogin: false,
   isAdmin: false,
+  env_pdf_converter_enabled: false,
 };
 
 const getters = {
@@ -19,6 +20,7 @@ const getters = {
   },
   failedLogin: state => state.failedLogin,
   isAdmin: state => state.isAdmin,
+  env_pdf_converter_enabled: state => state.env_pdf_converter_enabled,
 };
 
 const actions = {
@@ -106,6 +108,9 @@ const mutations = {
   },
   setPermission(state, payload) {
     state.isAdmin = payload.isAdmin;
+  },
+  setEnvPdfConverterEnabled(state, value) {
+    state.env_pdf_converter_enabled = value;
   },
 };
 

@@ -158,6 +158,7 @@ const login = ref(false);
 
 const data_page = ref();
 
+const app_settings_fetched = ref(false);
 const env_color = ref();
 const env_title_prefix = ref("");
 
@@ -165,8 +166,8 @@ const authenticated = ref(computed(() => store.getters.authenticated));
 const isAdmin = ref(computed(() => store.getters.isAdmin));
 const username = ref(computed(() => store.getters.username));
 
-if (!env_color.value) {
-  set_app_color();
+if (!app_settings_fetched.value) {
+  fetch_app_settings();
 }
 
 onMounted(async () => {
@@ -193,10 +194,12 @@ watch(authenticated, (newVal, oldVal) => {
   }
 });
 
-async function set_app_color() {
+async function fetch_app_settings() {
   let resp = await retrieveData("env/");
-  env_color.value = resp === "Testx" ? "glossy bg-purple" : "glossy bg-primary";
-  env_title_prefix.value = resp === "Testx" ? "Test Environment: " : "";
+  env_color.value = resp.env === "Testx" ? "glossy bg-purple" : "glossy bg-primary";
+  env_title_prefix.value = resp.env === "Testx" ? "Test Environment: " : "";
+  app_settings_fetched.value = true;
+  store.commit("setEnvPdfConverterEnabled", resp.pdf_converter_enabled);
 }
 
 async function logout() {

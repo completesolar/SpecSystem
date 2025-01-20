@@ -1,5 +1,6 @@
 from rest_framework.decorators import APIView
 from django.db import connection
+from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
@@ -30,6 +31,9 @@ class Env(APIView):
 
     def get(self, request, format=None):
         try:
-            return Response(os.getenv('AD_SUFFIX', 'Prod'))
+            return Response({
+                "env": os.getenv('AD_SUFFIX', 'Prod'),
+                "pdf_converter_enabled": settings.SOFFICE != None and settings.SOFFICE != ''
+            })
         except BaseException as be: # pragma: no cover
             formatError(be, "ENV-001")

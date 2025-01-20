@@ -3,6 +3,11 @@ import os
 from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, GroupOfNamesType, LDAPGroupQuery
 from pathlib import Path
 
+BASE_URL = 'http://localhost:8087/'
+
+# SECRET_JWT must have the same value as in docker-compose.yml
+SECRET_JWT='fN5.Oo52zFZ4Kn9k'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-*_GenerateAcustomKey'
 
@@ -70,7 +75,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # PDF Conversion tools
 # Install LibreOffice from https://www.libreoffice.org/download/download-libreoffice/
-SOFFICE = 'libreoffice'
+SOFFICE = 'libreoffice24.8'
 TEMP_PDF = os.path.join(MEDIA_ROOT, 'temp')
 
 EMAIL_HOST = 'smtp.office365.com'

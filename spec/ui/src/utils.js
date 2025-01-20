@@ -1,7 +1,7 @@
 
 import { Notify } from 'quasar'
 
-export const apiServerHost = process.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:8000';
+export const apiServerHost = process.env.NODE_ENV === 'production' ? '' : '';
 
 export const metadata_cols = ['row_num', 'creation_tm', '_new_row']
 
