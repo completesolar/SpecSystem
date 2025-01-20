@@ -533,7 +533,7 @@
           <template v-slot:header>
             <q-th v-show="edit" />
             <q-th align="left">File Name</q-th>
-            <q-th align="left">Add to PDF</q-th>
+            <q-th align="left" v-if="env_pdf_converter_enabled">Add to PDF</q-th>
           </template>
           <template v-slot:body="tprops">
             <q-tr>
@@ -583,7 +583,7 @@
                   {{ tprops.row["filename"] }}
                 </a>
               </q-td>
-              <q-td>
+              <q-td v-if="env_pdf_converter_enabled">
                 <q-checkbox
                   v-if="disp_incl_pdf(tprops.row)"
                   v-model="tprops.row['incl_pdf']"
@@ -761,6 +761,7 @@ const props = defineProps({
 });
 const store = useStore();
 
+const env_pdf_converter_enabled = ref(computed(() => store.getters.env_pdf_converter_enabled));
 const anon_access = ref({ label: "False", value: false });
 const approved_dt = ref("");
 const comment = ref("");
