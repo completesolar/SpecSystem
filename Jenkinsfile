@@ -17,7 +17,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
     }
-
+    
     stages {
         stage('Checkout') {
             when {
@@ -28,7 +28,15 @@ pipeline {
                     url: 'https://github.com/completesolar/SpecSystem.git'
             }
         }
-
+        stage('Verify') {
+            steps {
+                sh """
+                    pwd
+                    ls -l
+                    git branch -l
+                 """ 
+            }
+         }
         stage('Deploy to Remote Server') {
             steps {
                 sshagent (credentials: [env.SSH_KEY_ID]) {
