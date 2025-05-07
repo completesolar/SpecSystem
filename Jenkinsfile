@@ -6,7 +6,7 @@ pipeline {
         SSH_USER = 'ubuntu'                      
         SSH_HOST = '10.121.121.83'
         REMOTE_PATH = '/home/ubuntu/deploy'
-        SSH_KEY_ID = 'cs-prod-1.pem'     // Jenkins credentials ID for SSH key
+        SSH_KEY_ID = 'cs-prod-1'     // Jenkins credentials ID for SSH key
     }
 
     triggers {
@@ -44,7 +44,7 @@ pipeline {
 
     post {
         failure {
-            mail to: 'you@example.com',
+            mail to: 'vignesh.rajamanickam@sunpower.com',
                  subject: "Failed Deployment on ${env.BUILD_URL}",
                  body: "Pipeline failed for branch: ${env.BRANCH_NAME}"
         }
