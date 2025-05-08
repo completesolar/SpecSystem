@@ -7,7 +7,7 @@ pipeline {
 
     triggers {
         githubPush()
-        // Optional: pollSCM('H/5 * * * *')
+        pollSCM('H/2 * * * *')
     }
 
     stages {
@@ -22,11 +22,13 @@ pipeline {
                 script {
                     def remote = [:]
                     remote.name = 'specsystem-prod-ami-test'
+                    remote.user = 'jenkins'  // Required even if user is configured in Jenkins
                     remote.allowAnyHosts = true
 
                     sshPut remote: remote, from: 'deploy/deploy.sh', into: '/tmp/deploy.sh'
 
                     sshCommand remote: remote, command: """
+                        echo "Running deploy.sh on branch: ${BRANCH}"
                         chmod +x /tmp/deploy.sh &&
                         BRANCH=${BRANCH} bash /tmp/deploy.sh
                     """
