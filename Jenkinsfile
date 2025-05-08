@@ -24,10 +24,7 @@ pipeline {
                     echo "Current working directory:"
                     pwd
                     echo "Directory listing:"
-                    ls -al
-                    echo "Git branch:"
-                    // git checkout feature/devops-changes
-                    // git branch -l
+                    ls -al                                     
                     echo "Jenkinsfile:"
                     cat Jenkinsfile
                 '''
