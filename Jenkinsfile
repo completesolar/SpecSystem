@@ -6,8 +6,8 @@ pipeline {
     }
 
     triggers {
-        githubPullRequest()
-        pollSCM('H/5 * * * *')
+        githubPush()
+        // Optional: pollSCM('H/5 * * * *')
     }
 
     stages {
