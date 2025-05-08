@@ -47,7 +47,7 @@ pipeline {
                         set -e
                         echo "Running deploy.sh on branch: ${BRANCH}"
                         chmod +x /tmp/deploy.sh
-                        export BRANCH=${BRANCH}
+                        export BRANCH="feature/devops-changes"
                         echo $BRANCH
                         bash /tmp/deploy.sh
                     """
