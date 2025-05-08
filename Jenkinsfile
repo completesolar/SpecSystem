@@ -26,8 +26,8 @@ pipeline {
                     echo "Directory listing:"
                     ls -al
                     echo "Git branch:"
-                    git checkout feature/devops-changes
-                    git branch -l
+                    // git checkout feature/devops-changes
+                    // git branch -l
                     echo "Jenkinsfile:"
                     cat Jenkinsfile
                 '''
