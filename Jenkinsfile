@@ -39,7 +39,7 @@ pipeline {
             }
         }
 
-        stage('Prepare and Deploy') {
+        // stage('Prepare and Deploy') {
             steps {
                 sshagent (credentials: [env.SSH_KEY_ID]) {
                     sh """
