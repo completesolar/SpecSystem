@@ -18,6 +18,18 @@ pipeline {
                 sh 'echo "Resolved branch: ${BRANCH}"'
             }
         }
+        stage('Verify Workspace') {
+            steps {
+                sh '''
+                    echo "Current working directory:"
+                    pwd
+                    echo "Directory listing:"
+                    ls -al
+                    echo "Git branch:"
+                    git branch -l
+                '''
+            }
+        }
 
         stage('Deploy to Remote Host') {
             steps {
