@@ -24,6 +24,7 @@ pipeline {
                     def remote = [:]
                     remote.name = 'specsystem-prod-ami-test'
                     remote.user = 'jenkins'               // Needed if not in Jenkins global config
+                    remote.host = '10.121.121.83' 
                     remote.allowAnyHosts = true           // Skip host key checking
 
                     // If you're using Jenkins credentials plugin:
