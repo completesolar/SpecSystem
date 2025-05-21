@@ -18,13 +18,14 @@ pipeline {
                 sh 'echo "Resolved branch: ${BRANCH}"'
             }
         }
+
         stage('Verify Workspace') {
             steps {
                 sh '''
                     echo "Current working directory:"
                     pwd
                     echo "Directory listing:"
-                    ls -al                                     
+                    ls -al
                     echo "Jenkinsfile:"
                     cat Jenkinsfile
                 '''
@@ -47,8 +48,8 @@ pipeline {
                         set -e
                         echo "Running deploy.sh on branch: ${BRANCH}"
                         chmod +x /tmp/deploy.sh
-                        export BRANCH="feature/devops-changes"
-                        echo $BRANCH
+                        export BRANCH="${BRANCH}"
+                        echo \$BRANCH
                         bash /tmp/deploy.sh
                     """
                 }
