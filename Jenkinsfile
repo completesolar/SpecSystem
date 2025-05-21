@@ -2,18 +2,32 @@ pipeline {
     agent any
 
     environment {
-        BRANCH = "${env.CHANGE_BRANCH ?: env.BRANCH_NAME}"
+        BRANCH = "${env.GIT_BRANCH ?: env.BRANCH_NAME ?: 'feature/devops-changes'}"
     }
 
     triggers {
+        githubPush()
         githubPullRequest()
-        pollSCM('H/5 * * * *')
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh 'chmod +x deploy/deploy.sh'
+                sh 'echo "Resolved branch: ${BRANCH}"'
+            }
+        }
+        stage('Verify Workspace') {
+            steps {
+                sh '''
+                    echo "Current working directory:"
+                    pwd
+                    echo "Directory listing:"
+                    ls -al                                     
+                    echo "Jenkinsfile:"
+                    cat Jenkinsfile
+                '''
             }
         }
 
@@ -22,13 +36,20 @@ pipeline {
                 script {
                     def remote = [:]
                     remote.name = 'specsystem-prod-ami-test'
+                    remote.user = 'jenkins'
+                    remote.host = '10.121.121.83'
                     remote.allowAnyHosts = true
+                    remote.identityFile = '/var/lib/jenkins/.ssh/id_rsa'
 
                     sshPut remote: remote, from: 'deploy/deploy.sh', into: '/tmp/deploy.sh'
 
                     sshCommand remote: remote, command: """
-                        chmod +x /tmp/deploy.sh &&
-                        BRANCH=${BRANCH} bash /tmp/deploy.sh
+                        set -e
+                        echo "Running deploy.sh on branch: ${BRANCH}"
+                        chmod +x /tmp/deploy.sh
+                        export BRANCH="feature/devops-changes"
+                        echo $BRANCH
+                        bash /tmp/deploy.sh
                     """
                 }
             }
@@ -37,10 +58,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment successful!'
+            echo 'Deployment completed successfully.'
         }
         failure {
-            echo 'Deployment failed!'
+            echo 'Deployment failed. Check the logs for details.'
         }
     }
 }
