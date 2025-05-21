@@ -7,7 +7,7 @@ pipeline {
 
     triggers {
         githubPush()
-        githubPullRequest()
+        githubPullRequests()
     }
 
     stages {
