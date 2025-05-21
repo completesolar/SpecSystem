@@ -2,12 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BRANCH = "${env.GIT_BRANCH ?: env.BRANCH_NAME ?: 'feature/devops-changes'}"
-    }
-
-    triggers {
-        githubPush()
-        githubPullRequest()
+        BRANCH = "${env.BRANCH_NAME ?: 'feature/devops-changes'}"
+        CHANGE_TARGET = "${env.CHANGE_TARGET ?: ''}"
     }
 
     stages {
@@ -16,6 +12,7 @@ pipeline {
                 checkout scm
                 sh 'chmod +x deploy/deploy.sh'
                 sh 'echo "Resolved branch: ${BRANCH}"'
+                sh 'echo "Change target: ${CHANGE_TARGET}"'
             }
         }
 
@@ -33,6 +30,12 @@ pipeline {
         }
 
         stage('Deploy to Remote Host') {
+            when {
+                allOf {
+                    branch pattern: "feature/.*", comparator: "REGEXP"
+                    environment name: 'CHANGE_TARGET', value: 'develop'
+                }
+            }
             steps {
                 script {
                     def remote = [:]
