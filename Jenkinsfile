@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        BRANCH = "${env.BRANCH_NAME ?: 'feature/devops-changes'}"
+        BRANCH = "${env.CHANGE_BRANCH ?: env.BRANCH_NAME ?: 'feature/devops-changes'}"
         CHANGE_TARGET = "${env.CHANGE_TARGET ?: ''}"
     }
 
@@ -32,8 +32,9 @@ pipeline {
         stage('Deploy to Remote Host') {
             when {
                 allOf {
-                    branch pattern: "feature/.*", comparator: "REGEXP"
-                    environment name: 'CHANGE_TARGET', value: 'develop'
+                    expression { 
+                        return env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop"
+                    }
                 }
             }
             steps {
