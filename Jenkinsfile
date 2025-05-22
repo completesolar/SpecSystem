@@ -31,9 +31,14 @@ pipeline {
 
         stage('Deploy to Remote Host') {
             when {
-                allOf {
-                    expression { 
-                        return env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop"
+                anyOf {
+                    allOf {
+                        expression {
+                            return env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop"
+                        }
+                    }
+                    expression {
+                        return env.BRANCH == "develop"
                     }
                 }
             }
