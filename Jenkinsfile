@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        BRANCH = "${env.CHANGE_BRANCH ?: env.BRANCH_NAME ?: 'feature/devops-changes'}"
+        BRANCH = "${env.CHANGE_BRANCH ?: env.BRANCH_NAME}"
         CHANGE_TARGET = "${env.CHANGE_TARGET ?: ''}"
     }
 
@@ -38,18 +38,27 @@ pipeline {
                         }
                     }
                     expression {
-                        return env.BRANCH == "develop"
+                        return env.BRANCH == "develop" || env.BRANCH == "main"
                     }
                 }
             }
             steps {
                 script {
                     def remote = [:]
-                    remote.name = 'specsystem-prod-ami-test'
                     remote.user = 'jenkins'
-                    remote.host = '10.121.121.83'
                     remote.allowAnyHosts = true
                     remote.identityFile = '/var/lib/jenkins/.ssh/id_rsa'
+
+                    if (env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop") {
+                        remote.name = 'specsystem-prod-ami-test'
+                        remote.host = '10.121.121.83'
+                    } else if (env.BRANCH == "develop") {
+                        remote.name = 'specsystem-prod-ami-test'
+                        remote.host = '10.121.121.83'
+                    } else if (env.BRANCH == "main") {
+                        remote.name = 'specsystem-cs-prod-1'
+                        remote.host = '10.125.121.54'
+                    }
 
                     sshPut remote: remote, from: 'deploy/deploy.sh', into: '/tmp/deploy.sh'
 
