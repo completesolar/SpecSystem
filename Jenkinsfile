@@ -11,8 +11,14 @@ pipeline {
             steps {
                 checkout scm
                 sh 'chmod +x deploy/deploy.sh'
-                sh 'echo "Resolved branch: ${BRANCH}"'
-                sh 'echo "Change target: ${CHANGE_TARGET}"'
+                sh '''
+                    echo "Resolved branch: ${BRANCH}"
+                    echo "Change target: ${CHANGE_TARGET}"
+                    echo "Job name: ${JOB_NAME}"
+                    echo "Branch name: ${BRANCH_NAME}"
+                    echo "Change branch: ${CHANGE_BRANCH}"
+                    echo "Change target: ${CHANGE_TARGET}"
+                '''
             }
         }
 
@@ -31,15 +37,26 @@ pipeline {
 
         stage('Deploy to Remote Host') {
             when {
-                anyOf {
-                    allOf {
-                        expression {
-                            return env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop"
-                        }
+                expression {
+                    def isFeaturePRToDev = env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop"
+                    def isDevelopBranch = env.BRANCH == "develop"
+                    def isMainBranch = env.BRANCH == "main"
+
+                    def isDevJob = env.JOB_NAME.contains("spec-system-dev")
+                    def isProdJob = env.JOB_NAME.contains("spec-system-prod")
+
+                    // Run only in Dev job for feature→develop PRs or develop push
+                    if (isDevJob && (isFeaturePRToDev || isDevelopBranch)) {
+                        return true
                     }
-                    expression {
-                        return env.BRANCH == "develop" || env.BRANCH == "main"
+
+                    // Run only in Prod job for main branch
+                    if (isProdJob && isMainBranch) {
+                        return true
                     }
+
+                    // Otherwise skip
+                    return false
                 }
             }
             steps {
@@ -51,13 +68,13 @@ pipeline {
 
                     if (env.BRANCH ==~ /^feature\/.*/ && env.CHANGE_TARGET == "develop") {
                         remote.name = 'specsystem-prod-ami-test'
-                        remote.host = '10.121.121.83'
+                        remote.host = '10.121.121.83' // Dev Host
                     } else if (env.BRANCH == "develop") {
                         remote.name = 'specsystem-prod-ami-test'
-                        remote.host = '10.121.121.83'
+                        remote.host = '10.121.121.83' // Dev Host
                     } else if (env.BRANCH == "main") {
                         remote.name = 'specsystem-cs-prod-1'
-                        remote.host = '10.125.121.54'
+                        remote.host = '10.125.121.54' // Prod Host
                     }
 
                     sshPut remote: remote, from: 'deploy/deploy.sh', into: '/tmp/deploy.sh'
